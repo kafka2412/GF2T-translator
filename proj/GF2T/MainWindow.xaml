@@ -5,8 +5,25 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:GF2T"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="GF2T" Height="500" Width="500">
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="2*"/>
+            <RowDefinition Height="8*"/>
+        </Grid.RowDefinitions>
 
+        <Grid Grid.Row="0">
+            <Button Name="btTranslate" Content="번역하기" Width="200" Click="btTranslate_Click"/>
+        </Grid>
+        <Grid Grid.Row="1">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1*"/>
+                </Grid.RowDefinitions>
+                <TextBox Name="tbOriginal" TextWrapping="Wrap" Grid.Row="0"/>
+                <TextBox Name="tbTranslated" TextWrapping="Wrap" Grid.Row="1"/>
+            </Grid>
+        </Grid>
     </Grid>
 </Window>
