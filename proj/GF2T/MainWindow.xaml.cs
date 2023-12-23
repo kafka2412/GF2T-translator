@@ -4,6 +4,14 @@ using Page = PuppeteerSharp.Page;
 using System.Windows;
 using System.Diagnostics;
 using System.Windows.Threading;
+using System.IO;
+using System.Text;
+using System.Printing;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Drawing;
+using System.Drawing.Imaging;
 
 namespace GF2T
 {
@@ -14,6 +22,14 @@ namespace GF2T
     {
         private string sk = "zh-CN";
         private string tk = "ko";
+        private static string ocrText = string.Empty;
+        private Window ocrWindow;
+        private double ocrWindowLeft;
+        private double ocrWindowTop;
+
+        private static string ocrLibPath = Path.Combine(System.AppDomain.CurrentDomain.BaseDirectory, "ocrlib");
+        private static string modelPath = Path.Combine(ocrLibPath, "models");
+        private static string imageDirPath = Path.Combine(System.AppDomain.CurrentDomain.BaseDirectory, "temp");
 
         //private readonly TaskQueue taskQueue = new();
         //private readonly BlockingCollection<string> trList = new();
@@ -36,10 +52,19 @@ namespace GF2T
         public MainWindow()
         {
             InitializeComponent();
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
             InitWebBrowser();
+
+            InitOcrWindow();
 
             // Following code will watch automatically kill chromeDriver.exe
             BootWatchDog();
+        }
+
+        private void InitOcrWindow()
+        {
+            ocrWindow = new OcrAreaWindow();
+            ocrWindow.Show();
         }
 
         private static void BootWatchDog()
@@ -103,6 +128,11 @@ namespace GF2T
 
         private void btTranslate_Click(object sender, RoutedEventArgs e)
         {
+            btTranslateWork();
+        }
+
+        private void btTranslateWork()
+        {
             if (!tbOriginal.Text.Equals(""))
             {
                 Thread thread = new Thread(
@@ -123,6 +153,115 @@ namespace GF2T
                 thread.IsBackground = true;
                 thread.SetApartmentState(ApartmentState.STA);
                 thread.Start();
+            }
+        }
+
+        private void btOcr_Click(object sender, RoutedEventArgs e)
+        {
+            CaptureOcrArea();
+            RunOcr();
+            tbOriginal.Text = ocrText;
+            btTranslateWork();
+        }
+
+        private void RunOcr()
+        {
+            string imagePath = Path.Combine(imageDirPath, "output.png");
+            Process process = new Process();
+            process.StartInfo = new ProcessStartInfo
+            {
+                FileName = Path.Combine(ocrLibPath, "OcrLiteOnnx.exe"),
+                Arguments = $"-d {modelPath} -i {imagePath} -t 4 -p 50 -s 0 -b 0.6 -o 0.5 -a 0 -A 0",
+                UseShellExecute = false,
+                RedirectStandardOutput = true,
+                CreateNoWindow = true,
+                StandardOutputEncoding = Encoding.UTF8,
+            };
+            //process.Exited += (s, e) =>
+            //{
+            // save to text file
+            //var process = (Process)s;
+            //using (var f = File.CreateText(Path.Combine(imageDirPath, "2.txt")))
+            //{
+            //    f.Write(process.StandardOutput.ReadToEnd());
+            //}
+            //};
+            //process.OutputDataReceived += (s, e) =>
+            //{
+            //    //ocrText += output;
+            //};
+            process.Start();
+            //process.BeginOutputReadLine();
+
+            //string output = string.Empty;
+            //while (!process.StandardOutput.EndOfStream)
+            //{
+            //    output += process.StandardOutput.ReadToEnd();
+            //}
+
+            ocrText = process.StandardOutput.ReadToEnd();
+
+            process.WaitForExit();
+            if (process.ExitCode == 0)
+            {
+                tbOcr.Text += $"{ocrText}{Environment.NewLine}";
+            }
+            else
+            {
+                tbOcr.Text += $"Process failed with exit code {process.ExitCode}.{Environment.NewLine}";
+            }
+        }
+
+        private void btArea_Click(object sender, RoutedEventArgs e)
+        {
+            ocrWindowLeft = GetWindowLeft(ocrWindow);
+            ocrWindowTop = GetWindowTop(ocrWindow);
+
+            tbOcrLeft.Text = ocrWindowLeft.ToString();
+            tbOcrTop.Text = ocrWindowTop.ToString();
+        }
+
+        private double GetWindowLeft(Window window)
+        {
+            if (window.WindowState == WindowState.Maximized)
+            {
+                var leftField = typeof(Window).GetField("_actualLeft", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                return (double)leftField.GetValue(window);
+            }
+            else
+                return window.Left;
+        }
+
+        private double GetWindowTop(Window window)
+        {
+            if (window.WindowState == WindowState.Maximized)
+            {
+                var topField = typeof(Window).GetField("_actualTop", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                return (double)topField.GetValue(window);
+            }
+            else
+                return window.Top;
+        }
+
+        private void btCapture_Click(object sender, RoutedEventArgs e)
+        {
+            CaptureOcrArea();
+        }
+
+        private void CaptureOcrArea()
+        {
+            if (ocrWindow != null)
+            {
+                int width = (int)ocrWindow.Width;
+                int height = (int)ocrWindow.Height;
+                ocrWindow.Hide();
+
+                Rectangle rect = new((int)ocrWindowLeft, (int)ocrWindowTop, width, height); // Define the area to capture
+                Bitmap bmp = new(rect.Width, rect.Height, System.Drawing.Imaging.PixelFormat.Format32bppArgb); // Create a new bitmap
+                Graphics g = Graphics.FromImage(bmp); // Get a Graphics object from the bitmap
+                g.CopyFromScreen(rect.Left, rect.Top, 0, 0, bmp.Size, CopyPixelOperation.SourceCopy); // Copy the screen content into the bitmap
+                bmp.Save(Path.Combine(imageDirPath, "output.png"), ImageFormat.Png); // Save the bitmap as an image file
+                ocrWindow.Show();
             }
         }
     }

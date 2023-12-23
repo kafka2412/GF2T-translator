@@ -1,0 +1,24 @@
+﻿<Window x:Class="GF2T.OcrAreaWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:Behaviors="http://schemas.microsoft.com/xaml/behaviors"
+        xmlns:local="clr-namespace:GF2T" 
+        xmlns:localUtil="clr-namespace:GF2T.Util"
+        mc:Ignorable="d"
+        Topmost="True"
+        AllowsTransparency="True" WindowStyle="None"
+        ResizeMode="CanResizeWithGrip"
+        Title="OcrAreaWindow" Height="250" Width="600"
+        MinHeight="100" MinWidth="100">
+    <Window.Background>
+        <SolidColorBrush Opacity="0.4" Color="White"/>
+    </Window.Background>
+    <Behaviors:Interaction.Behaviors>
+        <localUtil:DragMoveBehavior/>
+    </Behaviors:Interaction.Behaviors>
+    <Grid>
+        
+    </Grid>
+</Window>
