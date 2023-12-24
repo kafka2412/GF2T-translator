@@ -7,10 +7,13 @@
         xmlns:local="clr-namespace:GF2T" 
         xmlns:localUtil="clr-namespace:GF2T.Util"
         mc:Ignorable="d"
+        Name="ocrWindow"
+        LocationChanged="OcrWindow_LocationChanged"
+        SizeChanged="OcrWindow_SizeChanged"
         Topmost="True"
         AllowsTransparency="True" WindowStyle="None"
         ResizeMode="CanResizeWithGrip"
-        Title="OcrAreaWindow" Height="250" Width="600"
+        Title="OcrAreaWindow" Height="150" Width="600"
         MinHeight="100" MinWidth="100">
     <Window.Background>
         <SolidColorBrush Opacity="0.4" Color="White"/>

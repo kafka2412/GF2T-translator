@@ -23,7 +23,7 @@ namespace GF2T
         private string sk = "zh-CN";
         private string tk = "ko";
         private static string ocrText = string.Empty;
-        private Window ocrWindow;
+        private OcrAreaWindow ocrWindow;
         private double ocrWindowLeft;
         private double ocrWindowTop;
 
@@ -33,6 +33,8 @@ namespace GF2T
 
         //private readonly TaskQueue taskQueue = new();
         //private readonly BlockingCollection<string> trList = new();
+
+        private bool isUIInitialized = false;
 
         private Browser browser = null;
         private async Task<Browser> initBrowser()
@@ -52,18 +54,56 @@ namespace GF2T
         public MainWindow()
         {
             InitializeComponent();
+            isUIInitialized = true;
+            InitOcrWindow();
+            LoadUserSettings();
+
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
             InitWebBrowser();
-
-            InitOcrWindow();
 
             // Following code will watch automatically kill chromeDriver.exe
             BootWatchDog();
         }
 
+        private void LoadUserSettings()
+        {
+            var mainPosLeft = Properties.Settings.Default.mainPosLeft;
+            var mainPosTop = Properties.Settings.Default.mainPosTop;
+            var ocrPosLeft = Properties.Settings.Default.ocrPosLeft;
+            var ocrPosTop = Properties.Settings.Default.ocrPosTop;
+            var mainWidth = Properties.Settings.Default.mainWidth;
+            var mainHeight = Properties.Settings.Default.mainHeight;
+
+            if (mainPosLeft != 0 && mainPosTop != 0)
+            {
+                mainWindow.Left = mainPosLeft;
+                mainWindow.Top = mainPosTop;
+            }
+
+            if (ocrPosLeft != 0 && ocrPosTop != 0)
+            {
+                ocrWindow.Left = ocrPosLeft;
+                ocrWindow.Top = ocrPosTop;
+                tbOcrLeft.Text = ocrPosLeft.ToString();
+                tbOcrTop.Text = ocrPosTop.ToString();
+            }
+
+            if (mainWidth != 0 && mainHeight != 0)
+            {
+                mainWindow.Width = mainWidth;
+                mainWindow.Height = mainHeight;
+            }
+        }
+
         private void InitOcrWindow()
         {
+            var ocrWidth = Properties.Settings.Default.ocrWidth;
+            var ocrHeight = Properties.Settings.Default.ocrHeight;
             ocrWindow = new OcrAreaWindow();
+            if (ocrWidth != 0 && ocrHeight != 0)
+            {
+                ocrWindow.SetWindowSize(ocrWidth, ocrHeight);
+            }
             ocrWindow.Show();
         }
 
@@ -128,6 +168,9 @@ namespace GF2T
 
         private void btTranslate_Click(object sender, RoutedEventArgs e)
         {
+            CaptureOcrArea();
+            RunOcr();
+            tbOriginal.Text = ocrText;
             btTranslateWork();
         }
 
@@ -216,6 +259,9 @@ namespace GF2T
         {
             ocrWindowLeft = GetWindowLeft(ocrWindow);
             ocrWindowTop = GetWindowTop(ocrWindow);
+            Properties.Settings.Default.mainPosLeft = ocrWindowLeft;
+            Properties.Settings.Default.mainPosTop = ocrWindowTop;
+            Properties.Settings.Default.Save();
 
             tbOcrLeft.Text = ocrWindowLeft.ToString();
             tbOcrTop.Text = ocrWindowTop.ToString();
@@ -254,13 +300,60 @@ namespace GF2T
             {
                 int width = (int)ocrWindow.Width;
                 int height = (int)ocrWindow.Height;
-                ocrWindow.Hide();
 
                 Rectangle rect = new((int)ocrWindowLeft, (int)ocrWindowTop, width, height); // Define the area to capture
                 Bitmap bmp = new(rect.Width, rect.Height, System.Drawing.Imaging.PixelFormat.Format32bppArgb); // Create a new bitmap
                 Graphics g = Graphics.FromImage(bmp); // Get a Graphics object from the bitmap
                 g.CopyFromScreen(rect.Left, rect.Top, 0, 0, bmp.Size, CopyPixelOperation.SourceCopy); // Copy the screen content into the bitmap
                 bmp.Save(Path.Combine(imageDirPath, "output.png"), ImageFormat.Png); // Save the bitmap as an image file
+                
+            }
+        }
+
+        private void btOcrPosReset_Click(object sender, RoutedEventArgs e)
+        {
+            ocrWindow.Left = 100;
+            ocrWindow.Top = 100;
+        }
+
+        private void MainWindow_LocationChanged(object sender, EventArgs e)
+        {
+            if (isUIInitialized)
+            {
+                if(mainWindow.WindowState.Equals(WindowState.Normal))
+                {
+                    Properties.Settings.Default.mainPosLeft = mainWindow.Left;
+                    Properties.Settings.Default.mainPosTop = mainWindow.Top;
+                    Properties.Settings.Default.Save();
+                }
+            }
+        }
+
+        private void MainWindow_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (isUIInitialized)
+            {
+                if (mainWindow.WindowState.Equals(WindowState.Normal))
+                {
+                    Properties.Settings.Default.mainWidth = mainWindow.Width;
+                    Properties.Settings.Default.mainHeight = mainWindow.Height;
+                    Properties.Settings.Default.Save();
+                }
+            }
+        }
+
+        private void btOcrToggle_Click(object sender, RoutedEventArgs e)
+        {
+            if (btOcrToggle.Content.Equals("숨기기"))
+            {
+                btOcrToggle.Content = "보이기";
+                //ocrWindow.Visibility = Visibility.Hidden;
+                ocrWindow.Hide();
+            }
+            else
+            {
+                btOcrToggle.Content = "숨기기";
+                //ocrWindow.Visibility = Visibility.Visible;
                 ocrWindow.Show();
             }
         }
