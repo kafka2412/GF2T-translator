@@ -104,6 +104,13 @@ namespace GF2T
                 var icon = (Material.Icons.WPF.MaterialIcon)btExpand.Content;
                 icon.Kind = Material.Icons.MaterialIconKind.ArrowCollapse;
             }
+
+            var hideOcrWindow = Properties.Settings.Default.hideOcrWindow;
+            if (hideOcrWindow)
+            {
+                btOcrToggle.Content = "보이기";
+                ocrWindow.Hide();
+            }
         }
 
         private void InitOcrWindow()
@@ -374,13 +381,16 @@ namespace GF2T
                 btOcrToggle.Content = "보이기";
                 //ocrWindow.Visibility = Visibility.Hidden;
                 ocrWindow.Hide();
+                Properties.Settings.Default.hideOcrWindow = true;
             }
             else
             {
                 btOcrToggle.Content = "숨기기";
                 //ocrWindow.Visibility = Visibility.Visible;
                 ocrWindow.Show();
+                Properties.Settings.Default.hideOcrWindow = false;
             }
+            Properties.Settings.Default.Save();
         }
 
         private void btExit_Click(object sender, RoutedEventArgs e)

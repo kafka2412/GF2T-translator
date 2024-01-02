@@ -142,5 +142,17 @@ namespace GF2T.Properties {
                 this["hideOcrTool"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool hideOcrWindow {
+            get {
+                return ((bool)(this["hideOcrWindow"]));
+            }
+            set {
+                this["hideOcrWindow"] = value;
+            }
+        }
     }
 }
