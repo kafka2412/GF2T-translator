@@ -291,7 +291,7 @@ namespace GF2T
             process.StartInfo = new ProcessStartInfo
             {
                 FileName = Path.Combine(ocrLibPath, "OcrLiteOnnx.exe"),
-                Arguments = $"-d {modelPath} -i {imagePath} -t 4 -p 50 -s 0 -b 0.6 -o 0.5 -a 0 -A 0",
+                Arguments = $"-d \"{modelPath}\" -i \"{imagePath}\" -t 4 -p 50 -s 0 -b 0.6 -o 0.5 -a 0 -A 0",
                 UseShellExecute = false,
                 RedirectStandardOutput = true,
                 CreateNoWindow = true,
