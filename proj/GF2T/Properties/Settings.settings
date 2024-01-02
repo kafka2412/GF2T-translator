@@ -26,5 +26,8 @@
     <Setting Name="ocrHeight" Type="System.Double" Scope="User">
       <Value Profile="(Default)">150</Value>
     </Setting>
+    <Setting Name="globalOpacity" Type="System.Double" Scope="User">
+      <Value Profile="(Default)">0.5</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

@@ -93,6 +93,9 @@ namespace GF2T
                 mainWindow.Width = mainWidth;
                 mainWindow.Height = mainHeight;
             }
+
+            var globalOpacity = Properties.Settings.Default.globalOpacity;
+            slOpacity.Value = globalOpacity;
         }
 
         private void InitOcrWindow()
@@ -395,6 +398,24 @@ namespace GF2T
                 return true;
             }
             return false;
+        }
+
+        private void slOpacity_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (isUIInitialized)
+            {
+                Properties.Settings.Default.globalOpacity = e.NewValue;
+                Properties.Settings.Default.Save();
+            }
+
+            if (mainWindow != null)
+            {
+                mainWindow.Background = new SolidColorBrush
+                {
+                    Color = Colors.Black,
+                    Opacity = e.NewValue
+                };
+            }
         }
     }
 }
