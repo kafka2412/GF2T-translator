@@ -109,6 +109,20 @@ namespace GF2T
                 btOcrToggle.Content = "보이기";
                 ocrWindow.Hide();
             }
+
+            var hideOriginalText = Properties.Settings.Default.hideOriginalText;
+            if (hideOriginalText)
+            {
+                tbOriginal.Visibility = Visibility.Collapsed;
+                var icon = (Material.Icons.WPF.MaterialIcon)btToggleText.Content;
+                icon.Kind = Material.Icons.MaterialIconKind.Translate;
+            }
+            else
+            {
+                tbOriginal.Visibility = Visibility.Visible;
+                var icon = (Material.Icons.WPF.MaterialIcon)btToggleText.Content;
+                icon.Kind = Material.Icons.MaterialIconKind.TranslateOff;
+            }
         }
 
         private void InitOcrWindow()
@@ -342,7 +356,7 @@ namespace GF2T
                 Graphics g = Graphics.FromImage(bmp); // Get a Graphics object from the bitmap
                 g.CopyFromScreen(rect.Left, rect.Top, 0, 0, bmp.Size, CopyPixelOperation.SourceCopy); // Copy the screen content into the bitmap
                 bmp.Save(Path.Combine(imageDirPath, "output.png"), ImageFormat.Png); // Save the bitmap as an image file
-                
+
             }
         }
 
@@ -362,8 +376,8 @@ namespace GF2T
                 {
                     return;
                 }
-                
-                if(mainWindow.WindowState.Equals(WindowState.Normal))
+
+                if (mainWindow.WindowState.Equals(WindowState.Normal))
                 {
                     Properties.Settings.Default.mainPosLeft = mainWindow.Left;
                     Properties.Settings.Default.mainPosTop = mainWindow.Top;
@@ -462,15 +476,32 @@ namespace GF2T
                 icon.Kind = Material.Icons.MaterialIconKind.ArrowCollapse;
                 spOcrTool.Visibility = Visibility.Collapsed;
                 Properties.Settings.Default.hideOcrTool = true;
-                Properties.Settings.Default.Save();
             }
             else
             {
                 icon.Kind = Material.Icons.MaterialIconKind.ArrowExpand;
                 spOcrTool.Visibility = Visibility.Visible;
                 Properties.Settings.Default.hideOcrTool = false;
-                Properties.Settings.Default.Save();
             }
+            Properties.Settings.Default.Save();
+        }
+
+        private void btToggleText_Click(object sender, RoutedEventArgs e)
+        {
+            var icon = (Material.Icons.WPF.MaterialIcon)btToggleText.Content;
+            if (icon.Kind.Equals(Material.Icons.MaterialIconKind.Translate))
+            {
+                icon.Kind = Material.Icons.MaterialIconKind.TranslateOff;
+                tbOriginal.Visibility = Visibility.Visible;
+                Properties.Settings.Default.hideOriginalText = false;
+            }
+            else
+            {
+                icon.Kind = Material.Icons.MaterialIconKind.Translate;
+                tbOriginal.Visibility = Visibility.Collapsed;
+                Properties.Settings.Default.hideOriginalText = true;
+            }
+            Properties.Settings.Default.Save();
         }
     }
 }

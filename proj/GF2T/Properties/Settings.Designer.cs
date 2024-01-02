@@ -154,5 +154,17 @@ namespace GF2T.Properties {
                 this["hideOcrWindow"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool hideOriginalText {
+            get {
+                return ((bool)(this["hideOriginalText"]));
+            }
+            set {
+                this["hideOriginalText"] = value;
+            }
+        }
     }
 }
