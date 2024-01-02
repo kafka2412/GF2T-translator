@@ -372,6 +372,11 @@ namespace GF2T
             }
         }
 
+        private void btExit_Click(object sender, RoutedEventArgs e)
+        {
+            Application.Current.Shutdown();
+        }
+
         private bool isMinimized(double top, double left)
         {
             if (top < -1 * SystemParameters.VirtualScreenHeight ||
