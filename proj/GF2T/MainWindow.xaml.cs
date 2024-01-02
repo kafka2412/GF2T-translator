@@ -96,6 +96,14 @@ namespace GF2T
 
             var globalOpacity = Properties.Settings.Default.globalOpacity;
             slOpacity.Value = globalOpacity;
+
+            var hideOcrTool = Properties.Settings.Default.hideOcrTool;
+            if (hideOcrTool)
+            {
+                spOcrTool.Visibility = Visibility.Collapsed;
+                var icon = (Material.Icons.WPF.MaterialIcon)btExpand.Content;
+                icon.Kind = Material.Icons.MaterialIconKind.ArrowCollapse;
+            }
         }
 
         private void InitOcrWindow()
@@ -415,6 +423,25 @@ namespace GF2T
                     Color = Colors.Black,
                     Opacity = e.NewValue
                 };
+            }
+        }
+
+        private void btExpand_Click(object sender, RoutedEventArgs e)
+        {
+            var icon = (Material.Icons.WPF.MaterialIcon)btExpand.Content;
+            if (icon.Kind.Equals(Material.Icons.MaterialIconKind.ArrowExpand))
+            {
+                icon.Kind = Material.Icons.MaterialIconKind.ArrowCollapse;
+                spOcrTool.Visibility = Visibility.Collapsed;
+                Properties.Settings.Default.hideOcrTool = true;
+                Properties.Settings.Default.Save();
+            }
+            else
+            {
+                icon.Kind = Material.Icons.MaterialIconKind.ArrowExpand;
+                spOcrTool.Visibility = Visibility.Visible;
+                Properties.Settings.Default.hideOcrTool = false;
+                Properties.Settings.Default.Save();
             }
         }
     }

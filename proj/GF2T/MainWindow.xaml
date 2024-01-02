@@ -6,6 +6,7 @@
         xmlns:Behaviors="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:local="clr-namespace:GF2T"
         xmlns:localUtil="clr-namespace:GF2T.Util"
+        xmlns:materialIcons="clr-namespace:Material.Icons.WPF;assembly=Material.Icons.WPF"
         mc:Ignorable="d"
         Name="mainWindow"
         LocationChanged="MainWindow_LocationChanged"
@@ -46,8 +47,9 @@
         </Grid.RowDefinitions>
         <Grid Grid.Row="0" Margin="4" VerticalAlignment="Top">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                <Button Name="btExit" Click="btExit_Click" Content=" X "
-                        Background="#00000000" Foreground="White" BorderBrush="#FF7C7C7C"/>
+                <Button Name="btExpand" Click="btExpand_Click" Content="{materialIcons:MaterialIconExt Kind=ArrowExpand, Size=16}"/>
+                <Border Width="4"/>
+                <Button Name="btExit" Click="btExit_Click" Content="{materialIcons:MaterialIconExt Kind=Close, Size=16}"/>
             </StackPanel>
         </Grid>
         <Grid Grid.Row="1" Margin="4,0,4,4">
@@ -67,39 +69,38 @@
                 </StackPanel>
             </Grid>
             <Grid Grid.Row="1">
-                <DockPanel>
-                    <TextBox Visibility="Collapsed" Name="tbOcr" TextWrapping="Wrap" Grid.Row="0"/>
-                    <TextBox Visibility="Collapsed" Name="tbOriginal" Margin="4"  AcceptsReturn="True" IsReadOnly="True" TextWrapping="Wrap" Grid.Row="0"/>
-                    <TextBox Name="tbTranslated" Margin="4" AcceptsReturn="True" IsReadOnly="True" TextWrapping="Wrap" VerticalAlignment="Stretch"
-                             DockPanel.Dock="Top"/>
+                <TextBox Visibility="Collapsed" Name="tbOcr" TextWrapping="Wrap" Grid.Row="0"/>
+                <TextBox Visibility="Collapsed" Name="tbOriginal" Margin="4"  AcceptsReturn="True" IsReadOnly="True" TextWrapping="Wrap" Grid.Row="0"/>
+                <DockPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                           Height="Auto">
+                    <StackPanel Name="spOcrTool" Visibility="Visible" Margin="4"
+                            Orientation="Horizontal" HorizontalAlignment="Center"
+                            DockPanel.Dock="Bottom" Height="24">
+                        <Button Visibility="Collapsed" Name="btOcr" Content="OCR 실행" Width="100" Click="btOcr_Click"/>
+                        <Border Width="16"/>
+                        <Button Name="btArea" Content="OCR 영역 설정" Click="btArea_Click"/>
+                        <Border Width="16"/>
+                        <StackPanel Orientation="Horizontal">
+                            <StackPanel Orientation="Horizontal" >
+                                <Label Content="Left:"/>
+                                <TextBox Name="tbOcrLeft" IsReadOnly="True" TextWrapping="Wrap" Text="0"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <Label Content="Top:"/>
+                                <TextBox Name="tbOcrTop" IsReadOnly="True" TextWrapping="Wrap" Text="0"/>
+                            </StackPanel>
+                        </StackPanel>
+                        <Border Width="16"/>
+                        <Button Name="btOcrToggle" Content="숨기기" Click="btOcrToggle_Click"/>
+                        <Border Width="16"/>
+                        <Button Name="btPosReset" Content="위치 리셋" Click="btOcrPosReset_Click"/>
+                        <Border Width="16"/>
+                    </StackPanel>
+                    <TextBox Name="tbTranslated" Margin="4" AcceptsReturn="True" IsReadOnly="True" TextWrapping="Wrap"
+                             DockPanel.Dock="Top"  Height="Auto"
+                             VerticalAlignment="Stretch" VerticalContentAlignment="Stretch"/>
                 </DockPanel>
             </Grid>
-        </Grid>
-        <Grid Grid.Row="2" Margin="4,0,4,4">
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                <!--<Border Width="16"/>-->
-                <Button Visibility="Collapsed" Name="btOcr" Content="OCR 실행" Width="100" Click="btOcr_Click"/>
-                <Border Width="16"/>
-                <Button Name="btArea" Content="OCR 영역 설정" Click="btArea_Click"/>
-                <Border Width="16"/>
-                <StackPanel Orientation="Horizontal">
-                    <StackPanel Orientation="Horizontal" >
-                        <Label Content="Left:"/>
-                        <TextBox Name="tbOcrLeft" IsReadOnly="True" TextWrapping="Wrap" Text="0"/>
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal">
-                        <Label Content="Top:"/>
-                        <TextBox Name="tbOcrTop" IsReadOnly="True" TextWrapping="Wrap" Text="0"/>
-                    </StackPanel>
-                </StackPanel>
-                <Border Width="16"/>
-                <Button Name="btOcrToggle" Content="숨기기" Click="btOcrToggle_Click"/>
-                <Border Width="16"/>
-                <Button Name="btPosReset" Content="위치 리셋" Click="btOcrPosReset_Click"/>
-                <Border Width="16"/>
-            </StackPanel>
-
-
         </Grid>
     </Grid>
 </Window>
