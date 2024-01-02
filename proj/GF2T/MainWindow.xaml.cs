@@ -320,6 +320,13 @@ namespace GF2T
         {
             if (isUIInitialized)
             {
+                var top = mainWindow.Top;
+                var left = mainWindow.Left;
+                if (isMinimized(top, left) || isMaximized(top, left))
+                {
+                    return;
+                }
+                
                 if(mainWindow.WindowState.Equals(WindowState.Normal))
                 {
                     Properties.Settings.Default.mainPosLeft = mainWindow.Left;
@@ -333,6 +340,13 @@ namespace GF2T
         {
             if (isUIInitialized)
             {
+                var top = mainWindow.Top;
+                var left = mainWindow.Left;
+                if (isMinimized(top, left) || isMaximized(top, left))
+                {
+                    return;
+                }
+
                 if (mainWindow.WindowState.Equals(WindowState.Normal))
                 {
                     Properties.Settings.Default.mainWidth = mainWindow.Width;
@@ -356,6 +370,26 @@ namespace GF2T
                 //ocrWindow.Visibility = Visibility.Visible;
                 ocrWindow.Show();
             }
+        }
+
+        private bool isMinimized(double top, double left)
+        {
+            if (top < -1 * SystemParameters.VirtualScreenHeight ||
+                    left < -1 * SystemParameters.VirtualScreenWidth)
+            {// To skip the case of minimized window
+                return true;
+            }
+            return false;
+        }
+
+        private bool isMaximized(double top, double left)
+        {
+            if (top > SystemParameters.VirtualScreenHeight ||
+                left > SystemParameters.VirtualScreenWidth)
+            { // To skip the case of maximized window
+                return true;
+            }
+            return false;
         }
     }
 }
