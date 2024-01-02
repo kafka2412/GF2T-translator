@@ -24,8 +24,6 @@ namespace GF2T
         private string tk = "ko";
         private static string ocrText = string.Empty;
         private OcrAreaWindow ocrWindow;
-        private double ocrWindowLeft;
-        private double ocrWindowTop;
 
         private static string ocrLibPath = Path.Combine(System.AppDomain.CurrentDomain.BaseDirectory, "ocrlib");
         private static string modelPath = Path.Combine(ocrLibPath, "models");
@@ -275,8 +273,8 @@ namespace GF2T
 
         private void btArea_Click(object sender, RoutedEventArgs e)
         {
-            ocrWindowLeft = GetWindowLeft(ocrWindow);
-            ocrWindowTop = GetWindowTop(ocrWindow);
+            var ocrWindowLeft = GetWindowLeft(ocrWindow);
+            var ocrWindowTop = GetWindowTop(ocrWindow);
             Properties.Settings.Default.mainPosLeft = ocrWindowLeft;
             Properties.Settings.Default.mainPosTop = ocrWindowTop;
             Properties.Settings.Default.Save();
@@ -319,7 +317,7 @@ namespace GF2T
                 int width = (int)ocrWindow.Width;
                 int height = (int)ocrWindow.Height;
 
-                Rectangle rect = new((int)ocrWindowLeft, (int)ocrWindowTop, width, height); // Define the area to capture
+                Rectangle rect = new((int)ocrWindow.Left, (int)ocrWindow.Top, width, height); // Define the area to capture
                 Bitmap bmp = new(rect.Width, rect.Height, System.Drawing.Imaging.PixelFormat.Format32bppArgb); // Create a new bitmap
                 Graphics g = Graphics.FromImage(bmp); // Get a Graphics object from the bitmap
                 g.CopyFromScreen(rect.Left, rect.Top, 0, 0, bmp.Size, CopyPixelOperation.SourceCopy); // Copy the screen content into the bitmap
