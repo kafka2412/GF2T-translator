@@ -245,9 +245,9 @@ namespace GF2T
             ocrText = ocrText.Replace("？", "?");
             ocrText = ocrText.Replace("！", "!");
             // replace end symbol to new line
-            ocrText = ocrText.Replace(".", $"{Environment.NewLine}");
-            ocrText = ocrText.Replace("?", $"{Environment.NewLine}");
-            ocrText = ocrText.Replace("!", $"{Environment.NewLine}");
+            //ocrText = ocrText.Replace(".", $"{Environment.NewLine}");
+            //ocrText = ocrText.Replace("?", $"{Environment.NewLine}");
+            //ocrText = ocrText.Replace("!", $"{Environment.NewLine}");
             return ocrText;
         }
 
