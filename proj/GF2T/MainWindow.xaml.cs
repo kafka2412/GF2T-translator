@@ -503,5 +503,21 @@ namespace GF2T
             }
             Properties.Settings.Default.Save();
         }
+
+        private void btHelp_Click(object sender, RoutedEventArgs e)
+        {
+            gdHelp.Visibility = Visibility.Visible;
+        }
+
+        private void Hyperlink_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
+        {
+            Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri) { UseShellExecute = true});
+            e.Handled = true;
+        }
+
+        private void btHelpHide_Click(object sender, RoutedEventArgs e)
+        {
+            gdHelp.Visibility = Visibility.Hidden;
+        }
     }
 }

@@ -38,6 +38,9 @@
         <Style TargetType="Label">
             <Setter Property="Foreground" Value="White"/>
         </Style>
+        <Style TargetType="TextBlock">
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -45,7 +48,39 @@
             <RowDefinition Height="1*"/>
             <RowDefinition Height="AUTO"/>
         </Grid.RowDefinitions>
+        <Grid Name="gdHelp" Visibility="Hidden" Grid.Row="0" Grid.RowSpan="3" Background="Black" Panel.ZIndex="1">
+            <Button Name="btHelpHide" HorizontalAlignment="Left" VerticalAlignment="Top" Click="btHelpHide_Click"
+                    Content="{materialIcons:MaterialIconExt Kind=Help, Size=16}" Panel.ZIndex="1" Margin="4"/>
+            <StackPanel Orientation="Vertical" Margin="4">
+                <Label Content="GF2T (Girl's Frontline 2 Translator)" HorizontalAlignment="Center"/>
+                <Label Content="사용법" FontWeight="Bold"/>
+                <TextBlock TextWrapping="Wrap">
+                    1. 흰 창을 적당히 위치시키고 크기를 조정하여 인식 영역을 정한다.
+                </TextBlock>
+                <TextBlock TextWrapping="Wrap">
+                    2. OCR 영역 설정 버튼을 눌러 설정을 저장한다.
+                </TextBlock>
+                <TextBlock TextWrapping="Wrap">
+                    3. 숨기기 버튼을 눌러 흰 창을 숨긴다.
+                </TextBlock>
+                <TextBlock TextWrapping="Wrap">
+                    4. 번역하기 버튼을 눌러 번역을 실행한다.
+                </TextBlock>
+                <Border Height="4"/>
+                <Label Content="단축키" FontWeight="Bold"/>
+                <TextBlock TextWrapping="Wrap">
+                    ` 또는 ~ 키를 눌러도 번역이 진행된다.
+                </TextBlock>
+                <Border Height="8"/>
+                <TextBlock HorizontalAlignment="Center">
+                    문의: <Hyperlink RequestNavigate="Hyperlink_RequestNavigate" NavigateUri="https://arca.live/b/gilrsfrontline2exili/94824212">https://arca.live/b/gilrsfrontline2exili/94824212</Hyperlink>
+                </TextBlock>
+            </StackPanel>
+        </Grid>
         <Grid Grid.Row="0" Margin="4" VerticalAlignment="Top">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                <Button Name="btHelp" Click="btHelp_Click" Content="{materialIcons:MaterialIconExt Kind=Help, Size=16}"/>
+            </StackPanel>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                 <Button Name="btToggleText" Click="btToggleText_Click" Content="{materialIcons:MaterialIconExt Kind=Translate, Size=16}"/>
                 <Border Width="4"/>
