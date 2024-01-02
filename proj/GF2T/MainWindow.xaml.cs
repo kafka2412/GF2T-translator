@@ -186,8 +186,28 @@ namespace GF2T
         {
             CaptureOcrArea();
             RunOcr();
-            tbOriginal.Text = ocrText;
+            tbOriginal.Text = normalizeOcrString(ocrText);
+            //tbOriginal.Text = ocrText;
             btTranslateWork();
+        }
+
+        private static string normalizeOcrString(string ocrText)
+        {
+            // remove line break
+            ocrText = ocrText.Replace("\r\n", " ");
+            ocrText = ocrText.Replace("\n", " ");
+            ocrText = ocrText.Replace("\r", " ");
+            // remove full-width symbols
+            ocrText = ocrText.Replace("，", ",");
+            ocrText = ocrText.Replace("。", ".");
+            ocrText = ocrText.Replace("、", ",");
+            ocrText = ocrText.Replace("？", "?");
+            ocrText = ocrText.Replace("！", "!");
+            // replace end symbol to new line
+            ocrText = ocrText.Replace(".", $"{Environment.NewLine}");
+            ocrText = ocrText.Replace("?", $"{Environment.NewLine}");
+            ocrText = ocrText.Replace("!", $"{Environment.NewLine}");
+            return ocrText;
         }
 
         private void btTranslateWork()
