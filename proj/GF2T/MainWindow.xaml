@@ -135,7 +135,7 @@
                     <TextBox Visibility="Collapsed" Name="tbOriginal" DockPanel.Dock="Left" Margin="4"  AcceptsReturn="True" IsReadOnly="True" TextWrapping="Wrap" Width="140"/>
                     <TextBox Name="tbTranslated" Margin="4" AcceptsReturn="True" IsReadOnly="True" TextWrapping="Wrap"
                              DockPanel.Dock="Top"  Height="Auto"
-                             VerticalAlignment="Stretch" VerticalContentAlignment="Stretch"/>
+                             VerticalAlignment="Stretch" VerticalContentAlignment="Stretch" FontSize="14"/>
                 </DockPanel>
             </Grid>
         </Grid>
