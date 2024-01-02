@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Runtime.InteropServices;
 
 namespace GF2T
 {
@@ -33,6 +34,13 @@ namespace GF2T
         //private readonly BlockingCollection<string> trList = new();
 
         private bool isUIInitialized = false;
+
+        // DLL libraries used to manage hotkeys
+        [DllImport("user32.dll")]
+        public static extern bool RegisterHotKey(IntPtr hWnd, int id, int fsModifiers, int vlc);
+        [DllImport("user32.dll")]
+        public static extern bool UnregisterHotKey(IntPtr hWnd, int id);
+        private KeyboardHook KeyboardHook;
 
         private Browser browser = null;
         private async Task<Browser> initBrowser()
@@ -59,8 +67,22 @@ namespace GF2T
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
             InitWebBrowser();
 
+            InitHotkey();
+
             // Following code will watch automatically kill chromeDriver.exe
             BootWatchDog();
+        }
+
+        private void InitHotkey()
+        {
+            KeyboardHook = new KeyboardHook(this, VirtualKeyCodes.Tilde, ModifierKeyCodes.None);
+            KeyboardHook.Triggered += () =>
+            {
+                Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
+                {
+                    Explosion();
+                }));
+            };
         }
 
         private void LoadUserSettings()
@@ -197,6 +219,11 @@ namespace GF2T
         }
 
         private void btTranslate_Click(object sender, RoutedEventArgs e)
+        {
+            Explosion();
+        }
+
+        private void Explosion()
         {
             CaptureOcrArea();
             RunOcr();
@@ -518,6 +545,14 @@ namespace GF2T
         private void btHelpHide_Click(object sender, RoutedEventArgs e)
         {
             gdHelp.Visibility = Visibility.Hidden;
+        }
+
+        private void mainWindow_Closed(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (KeyboardHook != null)
+            {
+                KeyboardHook.Dispose();
+            }
         }
     }
 }

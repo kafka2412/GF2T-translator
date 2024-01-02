@@ -17,7 +17,7 @@
         ResizeMode="CanResizeWithGrip"
         Title="GF2T" Height="200" Width="380"
         MinHeight="200" MinWidth="380"
-        MaxHeight="400" MaxWidth="500">
+        MaxHeight="400" MaxWidth="500" Closing="mainWindow_Closed">
     <Window.Background>
         <SolidColorBrush Opacity="0.5" Color="Black"/>
     </Window.Background>
