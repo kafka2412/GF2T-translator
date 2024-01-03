@@ -166,5 +166,29 @@ namespace GF2T.Properties {
                 this["hideOriginalText"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("\\\\.\\DISPLAY1")]
+        public string mainScreen {
+            get {
+                return ((string)(this["mainScreen"]));
+            }
+            set {
+                this["mainScreen"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("\\\\.\\DISPLAY1")]
+        public string ocrScreen {
+            get {
+                return ((string)(this["ocrScreen"]));
+            }
+            set {
+                this["ocrScreen"] = value;
+            }
+        }
     }
 }
