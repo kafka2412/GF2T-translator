@@ -12,7 +12,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="lib\WpfScreenHelper.dll" />
     <None Remove="ocrlib\models\angle_net.onnx" />
     <None Remove="ocrlib\models\crnn_lite_lstm.onnx" />
     <None Remove="ocrlib\models\dbnet.onnx" />
@@ -24,9 +23,6 @@
 
   <ItemGroup>
     <Content Include="groza.ico" />
-    <Content Include="lib\WpfScreenHelper.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="ocrlib\models\angle_net.onnx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -83,6 +79,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="lib\WpfScreenHelper.dll">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
     <None Update="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
