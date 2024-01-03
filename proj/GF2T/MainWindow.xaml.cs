@@ -56,7 +56,7 @@ namespace GF2T
                     "--js-flags=\"--max-old-space-size=128\""
                 },
             });
-            return _browser;
+            return (Browser)_browser;
         }
         private Page webPage = null;
 
@@ -185,7 +185,7 @@ namespace GF2T
             var browserTask = Task.Run(async () => await initBrowser());
             browser = browserTask.GetAwaiter().GetResult();
             var pageTask = Task.Run(async () => await browser.NewPageAsync());
-            webPage = pageTask.GetAwaiter().GetResult();
+            webPage = (Page)pageTask.GetAwaiter().GetResult();
             webPage.DefaultTimeout = 0;
         }
 

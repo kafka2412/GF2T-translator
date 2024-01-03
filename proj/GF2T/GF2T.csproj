@@ -53,7 +53,7 @@
     <PackageReference Include="HtmlAgilityPack" Version="1.11.57" />
     <PackageReference Include="Material.Icons.WPF" Version="2.1.0" />
     <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.77" />
-    <PackageReference Include="PuppeteerSharp" Version="7.1.0" />
+    <PackageReference Include="PuppeteerSharp" Version="10.1.4" />
     <PackageReference Include="RelaxVersioner" Version="3.3.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
