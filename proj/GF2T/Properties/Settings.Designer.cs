@@ -190,5 +190,17 @@ namespace GF2T.Properties {
                 this["ocrScreen"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool doPreprocess {
+            get {
+                return ((bool)(this["doPreprocess"]));
+            }
+            set {
+                this["doPreprocess"] = value;
+            }
+        }
     }
 }

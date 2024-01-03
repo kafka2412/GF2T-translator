@@ -15,6 +15,8 @@ using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 using WpfScreenHelper;
 using WpfScreenHelper.Enum;
+using GF2T.Util;
+using System.Windows.Controls;
 
 namespace GF2T
 {
@@ -32,10 +34,9 @@ namespace GF2T
         private static string modelPath = Path.Combine(ocrLibPath, "models");
         private static string imageDirPath = Path.Combine(System.AppDomain.CurrentDomain.BaseDirectory, "temp");
 
-        //private readonly TaskQueue taskQueue = new();
-        //private readonly BlockingCollection<string> trList = new();
-
         public static bool isUIInitialized = false;
+
+        private bool preprocess = false;
 
         // DLL libraries used to manage hotkeys
         [DllImport("user32.dll")]
@@ -144,6 +145,9 @@ namespace GF2T
                 var icon = (Material.Icons.WPF.MaterialIcon)btToggleText.Content;
                 icon.Kind = Material.Icons.MaterialIconKind.TranslateOff;
             }
+
+            preprocess = Properties.Settings.Default.doPreprocess;
+            cbPreprocess.IsChecked = preprocess;
         }
 
         private void InitOcrWindow()
@@ -154,7 +158,7 @@ namespace GF2T
             ocrScreen ??= Screen.PrimaryScreen;
 
             ocrWindow = new OcrAreaWindow();
-            
+
             var ocrScale = ocrScreen.ScaleFactor;
             if (ocrWidth != 0 && ocrHeight != 0)
             {
@@ -230,12 +234,31 @@ namespace GF2T
 
         private void Explosion()
         {
-            CaptureOcrArea();
-            RunOcr();
+            var imagePath = Path.Combine(imageDirPath, "output.png");
+            var image = CaptureOcrArea(imagePath);
+            if (preprocess)
+            {
+                imagePath = PreprocessImage(image);
+            }
+            RunOcr(imagePath);
             tbOriginal.Text = normalizeOcrString(ocrText);
             //tbOriginal.Text = ocrText;
 
             btTranslateWork();
+        }
+
+        private string PreprocessImage(Bitmap imageOriginal)
+        {
+            string outputPath = Path.Combine(imageDirPath, "output_processed.png");
+
+            // 1. Adaptive Thresholding
+            var image = (Bitmap)imageOriginal.Clone();
+            Otsu.Convert2GrayScaleFast(image);
+            var threshold = Otsu.getOtsuThreshold(image);
+            Otsu.threshold(image, threshold);
+            image.Save(outputPath, ImageFormat.Png); // Save the bitmap as an image file
+
+            return outputPath;
         }
 
         private static string normalizeOcrString(string ocrText)
@@ -284,15 +307,14 @@ namespace GF2T
 
         private void btOcr_Click(object sender, RoutedEventArgs e)
         {
-            CaptureOcrArea();
-            RunOcr();
+            CaptureOcrArea(Path.Combine(imageDirPath, "output.png"));
+            RunOcr(Path.Combine(imageDirPath, "output.png"));
             tbOriginal.Text = ocrText;
             btTranslateWork();
         }
 
-        private void RunOcr()
+        private void RunOcr(string imagePath)
         {
-            string imagePath = Path.Combine(imageDirPath, "output.png");
             Process process = new Process();
             process.StartInfo = new ProcessStartInfo
             {
@@ -377,26 +399,24 @@ namespace GF2T
 
         private void btCapture_Click(object sender, RoutedEventArgs e)
         {
-            CaptureOcrArea();
+            CaptureOcrArea(Path.Combine(imageDirPath, "output.png"));
         }
 
-        private void CaptureOcrArea()
+        private Bitmap CaptureOcrArea(string outputPath)
         {
-            if (ocrWindow != null)
-            {
-                var screen = Screen.FromWindow(ocrWindow);
-                var scale = screen.ScaleFactor;
+            var screen = Screen.FromWindow(ocrWindow);
+            var scale = screen.ScaleFactor;
 
-                int width = (int)(ocrWindow.Width * scale);
-                int height = (int)(ocrWindow.Height * scale);
+            int width = (int)(ocrWindow.Width * scale);
+            int height = (int)(ocrWindow.Height * scale);
 
-                Rectangle rect = new((int)(ocrWindow.Left * scale), (int)(ocrWindow.Top * scale), width, height); // Define the area to capture
-                Bitmap bmp = new(rect.Width, rect.Height, System.Drawing.Imaging.PixelFormat.Format32bppArgb); // Create a new bitmap
-                Graphics g = Graphics.FromImage(bmp); // Get a Graphics object from the bitmap
-                g.CopyFromScreen(rect.Left, rect.Top, 0, 0, bmp.Size, CopyPixelOperation.SourceCopy); // Copy the screen content into the bitmap
-                bmp.Save(Path.Combine(imageDirPath, "output.png"), ImageFormat.Png); // Save the bitmap as an image file
-
-            }
+            Rectangle rect = new((int)(ocrWindow.Left * scale), (int)(ocrWindow.Top * scale), width, height); // Define the area to capture
+            Bitmap bitmap = new(rect.Width, rect.Height, System.Drawing.Imaging.PixelFormat.Format32bppArgb); // Create a new bitmap
+            Graphics g = Graphics.FromImage(bitmap); // Get a Graphics object from the bitmap
+            g.CopyFromScreen(rect.Left, rect.Top, 0, 0, bitmap.Size, CopyPixelOperation.SourceCopy); // Copy the screen content into the bitmap
+            bitmap.Save(outputPath, ImageFormat.Png); // Save the bitmap as an image file
+            
+            return bitmap;
         }
 
         private void btOcrPosReset_Click(object sender, RoutedEventArgs e)
@@ -551,7 +571,7 @@ namespace GF2T
 
         private void Hyperlink_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
         {
-            Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri) { UseShellExecute = true});
+            Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri) { UseShellExecute = true });
             e.Handled = true;
         }
 
@@ -581,6 +601,20 @@ namespace GF2T
                 mainWindow.Left = mainPosLeft;
                 mainWindow.Top = mainPosTop;
             }
+        }
+
+        private void cbPreprocess_Checked(object sender, RoutedEventArgs e)
+        {
+            preprocess = true;
+            Properties.Settings.Default.doPreprocess = true;
+            Properties.Settings.Default.Save();
+        }
+
+        private void cbPreprocess_Unchecked(object sender, RoutedEventArgs e)
+        {
+            preprocess = false;
+            Properties.Settings.Default.doPreprocess = false;
+            Properties.Settings.Default.Save();
         }
     }
 }

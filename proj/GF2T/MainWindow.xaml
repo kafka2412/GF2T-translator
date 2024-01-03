@@ -106,6 +106,10 @@
                     <Button Visibility="Collapsed" Name="btCapture" Content="영역 캡처" Width="100" Click="btCapture_Click"/>
                     <Button Name="btTranslate" Content="번역하기!" Width="80" Click="btTranslate_Click"/>
                 </StackPanel>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Label Content="배경제거:"/>
+                    <CheckBox Name="cbPreprocess" VerticalAlignment="Center" Checked="cbPreprocess_Checked" Unchecked="cbPreprocess_Unchecked"/>
+                </StackPanel>
             </Grid>
             <Grid Grid.Row="1">
                 <TextBox Visibility="Collapsed" Name="tbOcr" TextWrapping="Wrap" Grid.Row="0"/>

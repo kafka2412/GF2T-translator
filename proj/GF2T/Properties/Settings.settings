@@ -44,5 +44,8 @@
     <Setting Name="ocrScreen" Type="System.String" Scope="User">
       <Value Profile="(Default)">\\.\DISPLAY1</Value>
     </Setting>
+    <Setting Name="doPreprocess" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
   </Settings>
 </SettingsFile>
