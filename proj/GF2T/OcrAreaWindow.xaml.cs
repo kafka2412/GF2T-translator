@@ -11,6 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using WpfScreenHelper;
 
 namespace GF2T
 {
@@ -19,7 +20,7 @@ namespace GF2T
     /// </summary>
     public partial class OcrAreaWindow : Window
     {
-        private bool isUIInitialized = false;
+        private static bool isUIInitialized = false;
         public OcrAreaWindow()
         {
             InitializeComponent();
@@ -30,26 +31,6 @@ namespace GF2T
         {
             this.Width = width;
             this.Height = height;
-        }
-
-        private void OcrWindow_LocationChanged(object sender, EventArgs e)
-        {
-            if(isUIInitialized)
-            {
-                Properties.Settings.Default.ocrPosTop = this.Top;
-                Properties.Settings.Default.ocrPosLeft = this.Left;
-                Properties.Settings.Default.Save();
-            }
-        }
-
-        private void OcrWindow_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            if(isUIInitialized)
-            {
-                Properties.Settings.Default.ocrWidth = this.Width;
-                Properties.Settings.Default.ocrHeight = this.Height;
-                Properties.Settings.Default.Save();
-            }
         }
     }
 }

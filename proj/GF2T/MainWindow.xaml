@@ -11,6 +11,7 @@
         Name="mainWindow"
         LocationChanged="MainWindow_LocationChanged"
         SizeChanged="MainWindow_SizeChanged"
+        ContentRendered="Window_ContentRendered"
         WindowStyle="None"
         AllowsTransparency="True"
         Topmost="True"
@@ -36,6 +37,7 @@
             <Setter Property="Foreground" Value="White"/>
         </Style>
         <Style TargetType="Label">
+            <Setter Property="VerticalAlignment" Value="Center"/>
             <Setter Property="Foreground" Value="White"/>
         </Style>
         <Style TargetType="TextBlock">
@@ -119,11 +121,11 @@
                         <StackPanel Orientation="Horizontal">
                             <StackPanel Orientation="Horizontal" >
                                 <Label Content="Left:"/>
-                                <TextBox Name="tbOcrLeft" IsReadOnly="True" TextWrapping="Wrap" Text="0"/>
+                                <TextBox Name="tbOcrLeft" IsReadOnly="True" TextWrapping="Wrap" Text="0" VerticalAlignment="Center"/>
                             </StackPanel>
                             <StackPanel Orientation="Horizontal">
                                 <Label Content="Top:"/>
-                                <TextBox Name="tbOcrTop" IsReadOnly="True" TextWrapping="Wrap" Text="0"/>
+                                <TextBox Name="tbOcrTop" IsReadOnly="True" TextWrapping="Wrap" Text="0" VerticalAlignment="Center"/>
                             </StackPanel>
                         </StackPanel>
                         <Border Width="16"/>
@@ -134,7 +136,7 @@
                     </StackPanel>
                     <TextBox Visibility="Collapsed" Name="tbOriginal" DockPanel.Dock="Left" Margin="4"  AcceptsReturn="True" IsReadOnly="True" TextWrapping="Wrap" Width="140"/>
                     <TextBox Name="tbTranslated" Margin="4" AcceptsReturn="True" IsReadOnly="True" TextWrapping="Wrap"
-                             DockPanel.Dock="Top"  Height="Auto"
+                             Height="Auto"
                              VerticalAlignment="Stretch" VerticalContentAlignment="Stretch" FontSize="14"/>
                 </DockPanel>
             </Grid>

@@ -13,6 +13,8 @@ using System.Windows.Media.Imaging;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
+using WpfScreenHelper;
+using WpfScreenHelper.Enum;
 
 namespace GF2T
 {
@@ -33,7 +35,7 @@ namespace GF2T
         //private readonly TaskQueue taskQueue = new();
         //private readonly BlockingCollection<string> trList = new();
 
-        private bool isUIInitialized = false;
+        public static bool isUIInitialized = false;
 
         // DLL libraries used to manage hotkeys
         [DllImport("user32.dll")]
@@ -60,9 +62,9 @@ namespace GF2T
         public MainWindow()
         {
             InitializeComponent();
-            isUIInitialized = true;
             InitOcrWindow();
             LoadUserSettings();
+            isUIInitialized = true;
 
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
             InitWebBrowser();
@@ -87,18 +89,17 @@ namespace GF2T
 
         private void LoadUserSettings()
         {
-            var mainPosLeft = Properties.Settings.Default.mainPosLeft;
-            var mainPosTop = Properties.Settings.Default.mainPosTop;
+            var mainScale = Screen.FromWindow(mainWindow).ScaleFactor;
+            
             var ocrPosLeft = Properties.Settings.Default.ocrPosLeft;
             var ocrPosTop = Properties.Settings.Default.ocrPosTop;
-            var mainWidth = Properties.Settings.Default.mainWidth;
-            var mainHeight = Properties.Settings.Default.mainHeight;
+            var mainWidth = Properties.Settings.Default.mainWidth * mainScale;
+            var mainHeight = Properties.Settings.Default.mainHeight * mainScale;
 
-            if (mainPosLeft != 0 && mainPosTop != 0)
-            {
-                mainWindow.Left = mainPosLeft;
-                mainWindow.Top = mainPosTop;
-            }
+            /*
+             * Position of MainWindow will be set in Window_ContentRendered event,
+             * since the position can only be set after the window is rendered.
+             */
 
             if (ocrPosLeft != 0 && ocrPosTop != 0)
             {
@@ -151,12 +152,18 @@ namespace GF2T
         {
             var ocrWidth = Properties.Settings.Default.ocrWidth;
             var ocrHeight = Properties.Settings.Default.ocrHeight;
+            var ocrScreen = Screen.AllScreens.Where(screen => screen.DeviceName.Equals(Properties.Settings.Default.ocrScreen)).FirstOrDefault();
+            ocrScreen ??= Screen.PrimaryScreen;
+
             ocrWindow = new OcrAreaWindow();
+            
+            var ocrScale = ocrScreen.ScaleFactor;
             if (ocrWidth != 0 && ocrHeight != 0)
             {
                 ocrWindow.SetWindowSize(ocrWidth, ocrHeight);
             }
             ocrWindow.Show();
+            ocrWindow.SetWindowPosition(WpfScreenHelper.Enum.WindowPositions.Center, ocrScreen);
         }
 
         private static void BootWatchDog()
@@ -229,7 +236,8 @@ namespace GF2T
             RunOcr();
             tbOriginal.Text = normalizeOcrString(ocrText);
             //tbOriginal.Text = ocrText;
-            btTranslateWork();
+            
+            //btTranslateWork();
         }
 
         private static string normalizeOcrString(string ocrText)
@@ -336,8 +344,11 @@ namespace GF2T
         {
             var ocrWindowLeft = GetWindowLeft(ocrWindow);
             var ocrWindowTop = GetWindowTop(ocrWindow);
-            Properties.Settings.Default.mainPosLeft = ocrWindowLeft;
-            Properties.Settings.Default.mainPosTop = ocrWindowTop;
+            Properties.Settings.Default.ocrScreen = Screen.FromWindow(ocrWindow).DeviceName;
+            Properties.Settings.Default.ocrPosLeft = ocrWindowLeft;
+            Properties.Settings.Default.ocrPosTop = ocrWindowTop;
+            Properties.Settings.Default.ocrWidth = ocrWindow.Width;
+            Properties.Settings.Default.ocrHeight = ocrWindow.Height;
             Properties.Settings.Default.Save();
 
             tbOcrLeft.Text = ocrWindowLeft.ToString();
@@ -375,10 +386,13 @@ namespace GF2T
         {
             if (ocrWindow != null)
             {
-                int width = (int)ocrWindow.Width;
-                int height = (int)ocrWindow.Height;
+                var screen = Screen.FromWindow(ocrWindow);
+                var scale = screen.ScaleFactor;
 
-                Rectangle rect = new((int)ocrWindow.Left, (int)ocrWindow.Top, width, height); // Define the area to capture
+                int width = (int)(ocrWindow.Width * scale);
+                int height = (int)(ocrWindow.Height * scale);
+
+                Rectangle rect = new((int)(ocrWindow.Left * scale), (int)(ocrWindow.Top * scale), width, height); // Define the area to capture
                 Bitmap bmp = new(rect.Width, rect.Height, System.Drawing.Imaging.PixelFormat.Format32bppArgb); // Create a new bitmap
                 Graphics g = Graphics.FromImage(bmp); // Get a Graphics object from the bitmap
                 g.CopyFromScreen(rect.Left, rect.Top, 0, 0, bmp.Size, CopyPixelOperation.SourceCopy); // Copy the screen content into the bitmap
@@ -406,6 +420,7 @@ namespace GF2T
 
                 if (mainWindow.WindowState.Equals(WindowState.Normal))
                 {
+                    Properties.Settings.Default.mainScreen = Screen.FromWindow(mainWindow).DeviceName;
                     Properties.Settings.Default.mainPosLeft = mainWindow.Left;
                     Properties.Settings.Default.mainPosTop = mainWindow.Top;
                     Properties.Settings.Default.Save();
@@ -552,6 +567,21 @@ namespace GF2T
             if (KeyboardHook != null)
             {
                 KeyboardHook.Dispose();
+            }
+        }
+
+        private void Window_ContentRendered(object sender, EventArgs e)
+        {
+            var mainPosLeft = Properties.Settings.Default.mainPosLeft;
+            var mainPosTop = Properties.Settings.Default.mainPosTop;
+            if (mainPosLeft != 0 && mainPosTop != 0)
+            {
+                var mainScreen = Screen.AllScreens.Where(screen => screen.DeviceName.Equals(Properties.Settings.Default.mainScreen)).FirstOrDefault();
+                mainScreen ??= Screen.PrimaryScreen;
+
+                WindowHelper.SetWindowPosition(mainWindow, WindowPositions.Center, mainScreen);
+                mainWindow.Left = mainPosLeft;
+                mainWindow.Top = mainPosTop;
             }
         }
     }

@@ -8,8 +8,6 @@
         xmlns:localUtil="clr-namespace:GF2T.Util"
         mc:Ignorable="d"
         Name="ocrWindow"
-        LocationChanged="OcrWindow_LocationChanged"
-        SizeChanged="OcrWindow_SizeChanged"
         Topmost="True"
         AllowsTransparency="True" WindowStyle="None"
         ResizeMode="CanResizeWithGrip"

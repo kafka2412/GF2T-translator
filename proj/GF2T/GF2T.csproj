@@ -11,6 +11,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="lib\WpfScreenHelper.dll" />
     <None Remove="ocrlib\models\angle_net.onnx" />
     <None Remove="ocrlib\models\crnn_lite_lstm.onnx" />
     <None Remove="ocrlib\models\dbnet.onnx" />
@@ -22,6 +23,9 @@
 
   <ItemGroup>
     <Content Include="groza.ico" />
+    <Content Include="lib\WpfScreenHelper.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="ocrlib\models\angle_net.onnx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -59,6 +63,12 @@
     </PackageReference>
     <PackageReference Include="System.Drawing.Common" Version="8.0.0" />
     <PackageReference Include="System.Text.Encoding.CodePages" Version="8.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="WpfScreenHelper">
+      <HintPath>lib\WpfScreenHelper.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
   <ItemGroup>
